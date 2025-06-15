@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delicious Bites | Restaurant</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #fff8f0; color: #333; }
+    header { background: #e63946; color: white; padding: 20px 0; text-align: center; }
+    header h1 { font-size: 2.5em; }
+    nav { background: #f1f1f1; display: flex; justify-content: center; padding: 10px; gap: 15px; flex-wrap: wrap; }
+    nav button {
+      padding: 10px 15px;
+      background: #457b9d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    nav button.active, nav button:hover { background: #1d3557; }
+    .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+    .menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .item {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .item:hover { transform: scale(1.02); }
+    .item img { width: 100%; height: 180px; object-fit: cover; }
+    .item-content { padding: 15px; }
+    .item-content h3 { margin-bottom: 10px; }
+    .item-content p { font-size: 14px; color: #555; }
+    .item-content span { display: block; margin-top: 10px; font-weight: bold; color: #e63946; }
+
+    /* To-Do Section */
+    .todo-section {
+      background: #fefae0;
+      padding: 20px;
+      margin-top: 40px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .todo-section h2 {
+      color: #1d3557;
+      margin-bottom: 15px;
+    }
+    #todoInput {
+      width: 70%;
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #addTask {
+      padding: 10px 15px;
+      background: #e63946;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    ul#taskList {
+      list-style: none;
+      margin-top: 20px;
+    }
+    ul#taskList li {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    ul#taskList li button {
+      background: #d90429;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    footer {
+      background: #222;
+      color: #eee;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.8em; }
+      #todoInput { width: 100%; margin-bottom: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Delicious Bites</h1>
+    <p>Serving Fresh & Tasty Food Since 1995</p>
+  </header>
+
+  <nav>
+    <button class="filter-btn active" data-category="all">All</button>
+    <button class="filter-btn" data-category="starters">Starters</button>
+    <button class="filter-btn" data-category="main">Main Course</button>
+    <button class="filter-btn" data-category="dessert">Desserts</button>
+  </nav>
+
+  <div class="container">
+    <div class="menu" id="menuList">
+      <!-- Items will be injected by JS -->
+    </div>
+
+    <div class="todo-section">
+      <h2>📝 Staff To-Do List</h2>
+      <input type="text" id="todoInput" placeholder="Add a new task..." />
+      <button id="addTask">Add</button>
+      <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Delicious Bites | Designed with ❤</p>
+  </footer>
+
+  <script>
+    const menuItems = [
+      { name: "chilli chicken", category: "starters", price: "₹220", desc: "spicy chicken cubes", img: "https://cdn.pixabay.com/photo/2020/03/08/13/52/garlic-bread-4911387_1280.jpg" },
+      { name: "Paneer Tikka", category: "starters", price: "₹180", desc: "Grilled paneer cubes with spices", img: "https://cdn.pixabay.com/photo/2022/10/16/06/55/paneer-tikka-7524193_1280.jpg" },
+      { name: "Butter Chicken", category: "main", price: "₹260", desc: "Creamy tomato gravy with tender chicken", img: "https://cdn.pixabay.com/photo/2022/04/04/06/55/butter-chicken-7109393_1280.jpg" },
+      { name: "Veg Biryani", category: "main", price: "₹200", desc: "Aromatic rice with mixed vegetables", img: "https://cdn.pixabay.com/photo/2021/08/10/05/26/vegetable-biryani-6534092_1280.jpg" },
+      { name: "Gulab Jamun", category: "dessert", price: "₹80", desc: "Warm sweet syrup-soaked dumplings", img: "https://cdn.pixabay.com/photo/2020/12/14/14/48/gulab-jamun-5830545_1280.jpg" },
+      { name: "Chocolate Brownie", category: "dessert", price: "₹100", desc: "Rich chocolate brownie with nuts", img: "https://cdn.pixabay.com/photo/2017/12/28/17/43/brownie-3047500_1280.jpg" }
+    ];
+
+    const menuList = document.getElementById("menuList");
+    const buttons = document.querySelectorAll(".filter-btn");
+
+    function displayItems(category) {
+      menuList.innerHTML = "";
+      const filtered = category === "all" ? menuItems : menuItems.filter(item => item.category === category);
+      filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="item-content">
+            <h3>${item.name}</h3>
+            <p>${item.desc}</p>
+            <span>${item.price}</span>
+          </div>
+        `;
+        menuList.appendChild(div);
+      });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        displayItems(btn.dataset.category);
+      });
+    });
+
+    // Initial render
+    displayItems("all");
+
+    // To-Do List Logic
+    const todoInput = document.getElementById("todoInput");
+    const addTaskBtn = document.getElementById("addTask");
+    const taskList = document.getElementById("taskList");
+
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks.forEach(task => addTask(task));
+    }
+
+    function addTask(taskText) {
+      const li = document.createElement("li");
+      li.textContent = taskText;
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => {
+        li.remove();
+        saveTasks();
+      };
+      li.appendChild(delBtn);
+      taskList.appendChild(li);
+      saveTasks();
+    }
+
+    function saveTasks() {
+      const tasks = Array.from(taskList.children).map(li => li.firstChild.textContent);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    addTaskBtn.addEventListener("click", () => {
+      const task = todoInput.value.trim();
+      if (task) {
+        addTask(task);
+        todoInput.value = "";
+      }
+    });
+
+    // Load saved tasks on page load
+    window.addEventListener("DOMContentLoaded", loadTasks);
+  </script>
+
+</body>
+</html>
